@@ -1,34 +1,5 @@
 <template>
-  <li class="todo__item">
-    <div class="checkbox__container">
-      <label for="checkbox" class="checkbox__label">
-        <input
-          type="checkbox"
-          id="checkbox"
-          name="checkbox"
-          class="input__checkbox"
-          :class="todo.isCompleted ? 'input__checkbox--completed' : ''"
-          @change="handleChange($event, todo)"
-          :checked="todo.isCompleted"
-          />
-          <!-- @click.prevent="updateTodo(todo)" -->
-          <!-- v-model="todo.isCompleted" -->
-      </label>
-    </div>
-    <p
-      class="todo__content"
-      :class="todo.isCompleted ? 'todo__content--completed' : ''"
-    >
-      {{ todo.content }}
-    </p>
-    <button class="deleteBtn" @click.prevent="handleClick(todo)">
-      <img src="../assets/icon-cross.svg" alt="delete todo" />
-    </button>
-  </li>
-  <!-- <transition-group tag="ul" name="td" appear mode="out-in">
-  </transition-group> -->
-	<!-- <draggable :list="todos" tag="ul" :animation="900">
-	</draggable> -->
+
 </template>
 
 <script setup>

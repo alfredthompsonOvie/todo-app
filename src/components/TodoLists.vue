@@ -1,44 +1,116 @@
 <template>
 	<div class="todo__outputContainer" v-auto-animate>
-	<!-- ------------------------------------------------- -->
-			<!-- ALL -->
-			<template v-if="filteredBy === 'all'">
-				<draggable :list="todoList" tag="ul" :animation="900">
-					<TodoItem
-					v-for="item in todoList"
-					:key="item.content"
-					:todo="item"
-					/>
-				</draggable>
-				<!-- <TodoItem :todoList="todoList"/> -->
-			</template>
-			<!-- ACTIVE -->
-			<template v-if="filteredBy === 'active'">
-				<!-- <TodoItem :todoList="active"/> -->
-				<TodoItem
-				v-for="item in active"
-				:key="item.content"
-				:todo="item"
-				/>
-			</template>
-			<!-- COMPLETED-->
-			<template v-if="filteredBy === 'completed'">
-				<!-- <TodoItem :todoList="completed"/> -->
-				<TodoItem
-				v-for="item in completed"
-				:key="item.content"
-				:todo="item"
-				/>
-			</template>
-	<!-- ------------------------------------------------- -->
-	<!-- ------------------------------------------------- -->
-	<!-- ------------------------------------------------- -->
+		<!-- ------------------------------------------------- -->
+		<!-- ALL -->
+		<template v-if="filteredBy === 'all'">
+			<draggable v-model="todos" tag="ul" itemKey="todo" :animation="900">
+				<template #item="{ element: todo }">
+					<li class="todo__item">
+						<div class="checkbox__container">
+							<label for="checkbox" class="checkbox__label">
+								<input
+									type="checkbox"
+									id="checkbox"
+									name="checkbox"
+									class="input__checkbox"
+									:class="todo.isCompleted ? 'input__checkbox--completed' : ''"
+									@change="handleChange($event, todo)"
+									:checked="todo.isCompleted"
+								/>
+							</label>
+						</div>
+						<p
+							class="todo__content"
+							:class="todo.isCompleted ? 'todo__content--completed' : ''"
+						>
+							{{ todo.content }}
+						</p>
+						<button class="deleteBtn" @click.prevent="handleClick(todo)">
+							<img src="../assets/icon-cross.svg" alt="delete todo" />
+						</button>
+					</li>
+				</template>
+			</draggable>
+			<!-- <TodoItem
+			v-for="item in todoList"
+			:key="item.content"
+			:todo="item"
+			/> -->
+			<!-- <TodoItem :todoList="todoList"/> -->
+		</template>
+		<!-- ACTIVE -->
+		<template v-if="filteredBy === 'active'">
+			<!-- <TodoItem :todoList="active"/> -->
+			<!-- <TodoItem v-for="item in active" :key="item.content" :todo="item" /> -->
+			<draggable v-model="activeTodos" tag="ul" itemKey="active" :animation="100">
+				<template #item="{ element: todo }">
+					<li class="todo__item">
+						<div class="checkbox__container">
+							<label for="checkbox" class="checkbox__label">
+								<input
+									type="checkbox"
+									id="checkbox"
+									name="checkbox"
+									class="input__checkbox"
+									:class="todo.isCompleted ? 'input__checkbox--completed' : ''"
+									@change="handleChange($event, todo)"
+									:checked="todo.isCompleted"
+								/>
+							</label>
+						</div>
+						<p
+							class="todo__content"
+							:class="todo.isCompleted ? 'todo__content--completed' : ''"
+						>
+							{{ todo.content }}
+						</p>
+						<button class="deleteBtn" @click.prevent="handleClick(todo)">
+							<img src="../assets/icon-cross.svg" alt="delete todo" />
+						</button>
+					</li>
+				</template>
+			</draggable>
+		</template>
+		<!-- COMPLETED-->
+		<template v-if="filteredBy === 'completed'">
+			<draggable v-model="completedTodos" tag="ul" itemKey="completed" :animation="900">
+				<template #item="{ element: todo }">
+					<li class="todo__item">
+						<div class="checkbox__container">
+							<label for="checkbox" class="checkbox__label">
+								<input
+									type="checkbox"
+									id="checkbox"
+									name="checkbox"
+									class="input__checkbox"
+									:class="todo.isCompleted ? 'input__checkbox--completed' : ''"
+									@change="handleChange($event, todo)"
+									:checked="todo.isCompleted"
+								/>
+							</label>
+						</div>
+						<p
+							class="todo__content"
+							:class="todo.isCompleted ? 'todo__content--completed' : ''"
+						>
+							{{ todo.content }}
+						</p>
+						<button class="deleteBtn" @click.prevent="handleClick(todo)">
+							<img src="../assets/icon-cross.svg" alt="delete todo" />
+						</button>
+					</li>
+				</template>
+			</draggable>
+		</template>
+		<!-- ------------------------------------------------- -->
+		<!-- ------------------------------------------------- -->
+		<!-- ------------------------------------------------- -->
 		<!--! controls -->
-		<div class="controlsTab" v-if="todoList.length">
+		<div class="controlsTab" v-if="todos.length">
 			<p class="item__left">{{ store.itemsLeftTodo }} left</p>
 			<div class="main__controlTab tabComponents">
 				<button
-				type="button"
+					type="button"
 					class="allBtn"
 					@click.prevent="filteredBy = 'all'"
 					:class="filteredBy === 'all' ? 'isActive' : ''"
@@ -46,7 +118,7 @@
 					All
 				</button>
 				<button
-				type="button"
+					type="button"
 					class="activeBtn"
 					@click.prevent="filteredBy = 'active'"
 					:class="filteredBy === 'active' ? 'isActive' : ''"
@@ -54,7 +126,7 @@
 					Active
 				</button>
 				<button
-				type="button"
+					type="button"
 					class.prevent="completedBtn"
 					@click="filteredBy = 'completed'"
 					:class="filteredBy === 'completed' ? 'isActive' : ''"
@@ -76,28 +148,34 @@
 
 <script setup>
 import { ref, computed, watch } from "vue";
-import TodoItem from "./TodoItem.vue";
+// import TodoItem from "./TodoItem.vue";
 import { useTodoStore } from "../stores/todo";
 import { storeToRefs } from "pinia";
-// import { VueDraggableNext } from "vue-draggable-next";
-import draggable from 'vuedraggable';
+
+import draggable from "vuedraggable";
 
 const store = useTodoStore();
-const { todos, activeTodos, completedTodos } = storeToRefs(store)
-const filteredBy = ref('all')
+const { todos, activeTodos, completedTodos } = storeToRefs(store);
+const filteredBy = ref("all");
 
-const todoList = ref(todos)
+const todoList = ref(todos);
 
-const active = ref(activeTodos)
-const completed = ref(completedTodos)
+const active = ref(activeTodos);
+const completed = ref(completedTodos);
 
 const handleClearCompleted = () => {
-	store.clearCompleted()
+	store.clearCompleted();
+};
+
+const handleChange = ($event, todo) => {
+  // console.log($event.target.checked);
+  // console.log(todo);
+  store.updateTodo(todo)
 }
-
-
-
-
+const handleClick = (todo) => {
+  console.log("todoItem",todo);
+  store.deleteTodo(todo)
+}
 
 // export default {
 // 	name: "TodoLists",

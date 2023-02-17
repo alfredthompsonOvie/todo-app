@@ -89,27 +89,24 @@ const onSubmit = handleSubmit((values) => {
 <style>
 .error {
 	border: 1px solid red;
-	animation: buzz 0.2s linear 2;
+	transform: translate3d(0, 0, 0);
+	animation: buzz 0.82s cubic-bezier(.36, .07, .19, .97) both;
+	perspective: 1000px;
 }
 
 @keyframes buzz {
-	0% {
-		transform: translateX(0em);
+	10%, 90% {
+
+		transform: translate3d(-1px, 0, 0);
 	}
-	25% {
-		transform: translateX(0.5em);
+	20%, 80% {
+		transform: translate3d(2px, 0, 0);
 	}
-	70% {
-		transform: translateX(0.2em);
+	30%, 50%, 70% {
+		transform: translate3d(-4px, 0, 0);
 	}
-	75% {
-		transform: translateX(0.25em);
-	}
-	80% {
-		transform: translateX(0.2em);
-	}
-	95% {
-		transform: translateX(0.25em);
+	40%, 60% {
+		transform: translate3d(4px, 0, 0);
 	}
 }
 </style>

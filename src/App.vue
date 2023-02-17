@@ -40,22 +40,22 @@ export default {
 
 	setup() {
 		const isDark = ref(true);
-		const todoItem = ref("");
-		const todos = ref([]);
+		// const todoItem = ref("");
+		// const todos = ref([]);
 
-		const getTodoItem = (v) => todoItem.value = v 
+		// const getTodoItem = (v) => todoItem.value = v
 
-		watch(todoItem, () => {
-			let todo = {
-					content: todoItem.value,
-					isCompleted: false,
-					id: UID(),
-				};
+		// watch(todoItem, () => {
+		// 	let todo = {
+		// 			content: todoItem.value,
+		// 			isCompleted: false,
+		// 			id: UID(),
+		// 		};
 
-				todos.value.unshift(todo);
-		})
+		// 		todos.value.unshift(todo);
+		// })
 
-		
+
 		// watch(
 		// 	todos,
 		// 	(newVal) => {
@@ -67,17 +67,18 @@ export default {
 		// onMounted(() => {
 		// 	todos.value = JSON.parse(localStorage.getItem("todos")) || [];
 		// });
+		onMounted(()=> console.log('app'))
 
-		function deleteTodo(item) {
-			todos.value = todos.value.filter((todo) => {
-				return todo !== item;
-			});
-		}
-		function clearCompletedTodo() {
-			todos.value = todos.value.filter((todo) => {
-				return todo.isCompleted !== true;
-			});
-		}
+		// function deleteTodo(item) {
+		// 	todos.value = todos.value.filter((todo) => {
+		// 		return todo !== item;
+		// 	});
+		// }
+		// function clearCompletedTodo() {
+		// 	todos.value = todos.value.filter((todo) => {
+		// 		return todo.isCompleted !== true;
+		// 	});
+		// }
 
 		// function updateTodoList(lists) {
 		// 	todos.value = [];
@@ -87,11 +88,11 @@ export default {
 
 		return {
 			isDark,
-			todoItem,
-			todos,
-			deleteTodo,
-			clearCompletedTodo,
-			getTodoItem,
+			// todoItem,
+			// todos,
+			// deleteTodo,
+			// clearCompletedTodo,
+			// getTodoItem,
 			// updateTodoList,
 		};
 	},
