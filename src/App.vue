@@ -8,14 +8,16 @@
 			<!-- AppHeader -->
 			<app-header :isDark="isDark" @theme="isDark = !isDark" />
 			<!-- todo input -->
-				<create-todo v-model="todoItem" />
+			<!-- <create-todo v-model="todoItem" /> -->
+			<create-todo />
 			<!-- todo output -->
-			<todo-lists
-			:todos="todos" 
+			<todo-lists /> 
+			<!-- <app-todo-list 
+			:todos="todos"
 			@deleteItem="deleteTodo"
-			@clearCompleted="clearCompletedTodo"/>
-			<!-- <test-draggable  class="test"/> -->
-			<!-- <drag-n-drop /> -->
+			@clearCompleted="clearCompletedTodo"
+			/> -->
+			<!-- @updateTodoList="updateTodoList" -->
 		</div>
 	</div>
 </template>
@@ -25,16 +27,15 @@ import { ref, watch, onMounted } from "vue";
 import AppHeader from "@/components/AppHeader.vue";
 import CreateTodo from "@/components/CreateTodo.vue";
 import TodoLists from "@/components/TodoLists.vue";
-// import DragNDrop from "@/components/DragNDrop.vue";
-// import TestDraggable from "./components/TestDraggable.vue";
+// import AppTodoList from "./components/AppTodoList.vue";
+
 export default {
 	name: "App",
 	components: {
 		AppHeader,
 		CreateTodo,
 		TodoLists,
-		// DragNDrop
-		// TestDraggable,
+		// AppTodoList,
 	},
 
 	setup() {
@@ -42,30 +43,30 @@ export default {
 		const todoItem = ref("");
 		const todos = ref([]);
 
-		watch(todoItem, (newVal) => {
-			if (newVal !== "") {
-				let todo = {
+		const getTodoItem = (v) => todoItem.value = v 
+
+		watch(todoItem, () => {
+			let todo = {
 					content: todoItem.value,
 					isCompleted: false,
 					id: UID(),
 				};
 
 				todos.value.unshift(todo);
-				todoItem.value = "";
-			}
-		});
+		})
 
-		watch(
-			todos,
-			(newVal) => {
-				localStorage.setItem("todos", JSON.stringify(newVal));
-			},
-			{ deep: true }
-		);
+		
+		// watch(
+		// 	todos,
+		// 	(newVal) => {
+		// 		localStorage.setItem("todos", JSON.stringify(newVal));
+		// 	},
+		// 	{ deep: true }
+		// );
 
-		onMounted(() => {
-			todos.value = JSON.parse(localStorage.getItem("todos")) || [];
-		});
+		// onMounted(() => {
+		// 	todos.value = JSON.parse(localStorage.getItem("todos")) || [];
+		// });
 
 		function deleteTodo(item) {
 			todos.value = todos.value.filter((todo) => {
@@ -77,20 +78,21 @@ export default {
 				return todo.isCompleted !== true;
 			});
 		}
-		function UID() {
-			return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
-				(
-					c ^
-					(crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
-				).toString(16)
-			);
-		}
+
+		// function updateTodoList(lists) {
+		// 	todos.value = [];
+		// 	todos.value = lists
+		// 	console.log(lists);
+		// }
+
 		return {
 			isDark,
 			todoItem,
 			todos,
 			deleteTodo,
 			clearCompletedTodo,
+			getTodoItem,
+			// updateTodoList,
 		};
 	},
 };

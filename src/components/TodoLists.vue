@@ -1,155 +1,179 @@
 <template>
 	<div class="todo__outputContainer" v-auto-animate>
-		<draggable :list="filteredTodo" tag="ul">
-			<transition-group name="todo" appear mode="out-in">
-				<li class="todo__item" v-for="item in filteredTodo" :key="item.id">
-					<div class="checkbox__container">
-						<label for="checkbox" class="checkbox__label">
-							<input
-								type="checkbox"
-								id="checkbox"
-								name="checkbox"
-								class="input__checkbox"
-								:class="item.isCompleted ? 'input__checkbox--completed' : ''"
-								@click="updateTodo(item)"
-								v-model="item.isCompleted"
-							/>
-						</label>
-					</div>
-					<p
-						class="todo__content"
-						:class="item.isCompleted ? 'todo__content--completed' : ''"
-					>
-						{{ item.content }}
-					</p>
-					<button class="deleteBtn" @click="deleteTodo(item)">
-						<img src="../assets/icon-cross.svg" alt="" />
-					</button>
-				</li>
-			</transition-group>
-		</draggable>
-
+	<!-- ------------------------------------------------- -->
+			<!-- ALL -->
+			<template v-if="filteredBy === 'all'">
+				<draggable :list="todoList" tag="ul" :animation="900">
+					<TodoItem
+					v-for="item in todoList"
+					:key="item.content"
+					:todo="item"
+					/>
+				</draggable>
+				<!-- <TodoItem :todoList="todoList"/> -->
+			</template>
+			<!-- ACTIVE -->
+			<template v-if="filteredBy === 'active'">
+				<!-- <TodoItem :todoList="active"/> -->
+				<TodoItem
+				v-for="item in active"
+				:key="item.content"
+				:todo="item"
+				/>
+			</template>
+			<!-- COMPLETED-->
+			<template v-if="filteredBy === 'completed'">
+				<!-- <TodoItem :todoList="completed"/> -->
+				<TodoItem
+				v-for="item in completed"
+				:key="item.content"
+				:todo="item"
+				/>
+			</template>
+	<!-- ------------------------------------------------- -->
+	<!-- ------------------------------------------------- -->
+	<!-- ------------------------------------------------- -->
 		<!--! controls -->
-		<div class="controlsTab" v-if="todos.length">
-			<p class="item__left">{{ itemsLeft }}</p>
+		<div class="controlsTab" v-if="todoList.length">
+			<p class="item__left">{{ store.itemsLeftTodo }} left</p>
 			<div class="main__controlTab tabComponents">
 				<button
+				type="button"
 					class="allBtn"
-					@click="filteredBy = 'all'"
+					@click.prevent="filteredBy = 'all'"
 					:class="filteredBy === 'all' ? 'isActive' : ''"
 				>
 					All
 				</button>
 				<button
+				type="button"
 					class="activeBtn"
-					@click="filteredBy = 'active'"
+					@click.prevent="filteredBy = 'active'"
 					:class="filteredBy === 'active' ? 'isActive' : ''"
 				>
 					Active
 				</button>
 				<button
-					class="completedBtn"
+				type="button"
+					class.prevent="completedBtn"
 					@click="filteredBy = 'completed'"
 					:class="filteredBy === 'completed' ? 'isActive' : ''"
 				>
 					Completed
 				</button>
 			</div>
-			<button class="clear__completed" @click="clearCompletedTodo()">
+			<button class="clear__completed" @click.prevent="handleClearCompleted()">
 				Clear Completed
 			</button>
 		</div>
 	</div>
 	<transition name="info">
-		<p 
-		class="info" 
-		v-if="filteredTodo.length >= 2 && filteredBy === 'all'"
-		>
+		<p class="info" v-if="store.itemsLeftTodo >= 2">
 			Drag and drop to reorder list
 		</p>
 	</transition>
 </template>
 
-<script>
+<script setup>
 import { ref, computed, watch } from "vue";
-import { VueDraggableNext } from 'vue-draggable-next'
+import TodoItem from "./TodoItem.vue";
+import { useTodoStore } from "../stores/todo";
+import { storeToRefs } from "pinia";
+// import { VueDraggableNext } from "vue-draggable-next";
+import draggable from 'vuedraggable';
+
+const store = useTodoStore();
+const { todos, activeTodos, completedTodos } = storeToRefs(store)
+const filteredBy = ref('all')
+
+const todoList = ref(todos)
+
+const active = ref(activeTodos)
+const completed = ref(completedTodos)
+
+const handleClearCompleted = () => {
+	store.clearCompleted()
+}
 
 
-export default {
-	name: "TodoLists",
-	components: {
-		draggable: VueDraggableNext,
-	},
-	props: {
-		todos: {
-			type: Array,
-			required: true,
-		},
-	},
-	emits: ["deleteItem", "clearCompleted"],
 
-	data() {
-		return {
-			enabled: true,
-			dragging: false,
-		};
-	},
 
-	setup(props, context) {
-		const filteredBy = ref("all");
 
-		const filteredTodo = computed(() => {
-			if (filteredBy.value === "active") {
-				return props.todos.filter((todo) => {
-					return todo.isCompleted === false;
-				});
-			} else if (filteredBy.value === "completed") {
-				return props.todos.filter((todo) => {
-					return todo.isCompleted === true;
-				});
-			}
-			return props.todos;
-		});
+// export default {
+// 	name: "TodoLists",
+// 	components: {
+// 		draggable: VueDraggableNext,
+// 	},
+// 	props: {
+// 		todos: {
+// 			type: Array,
+// 			required: true,
+// 		},
+// 	},
+// 	emits: ["deleteItem", "clearCompleted"],
 
-		const itemsLeft = computed(() => {
-			let num = props.todos.filter((todo) => todo.isCompleted != true).length;
+// 	data() {
+// 		return {
+// 			enabled: true,
+// 			dragging: false,
+// 		};
+// 	},
 
-			if (num < 2) {
-				return `${num} item left`;
-			} else {
-				return `${num} items left`;
-			}
-		});
+// 	setup(props, context) {
+// 		const filteredBy = ref("all");
 
-		watch(
-			props.todos,
-			(newVal) => {
-				console.log(newVal);
-			},
-			{ deep: true }
-		);
-		console.log(props.todos);
+// 		const filteredTodo = computed(() => {
+// 			if (filteredBy.value === "active") {
+// 				return props.todos.filter((todo) => {
+// 					return todo.isCompleted === false;
+// 				});
+// 			} else if (filteredBy.value === "completed") {
+// 				return props.todos.filter((todo) => {
+// 					return todo.isCompleted === true;
+// 				});
+// 			}
+// 			return props.todos;
+// 		});
 
-		function deleteTodo(item) {
-			context.emit("deleteItem", item);
-		}
-		function updateTodo(item) {
-			item.isCompleted = !item.isCompleted;
-		}
-		function clearCompletedTodo() {
-			context.emit("clearCompleted");
-		}
+// 		const itemsLeft = computed(() => {
+// 			let num = props.todos.filter((todo) => todo.isCompleted != true).length;
 
-		return {
-			filteredTodo,
-			itemsLeft,
-			filteredBy,
-			deleteTodo,
-			updateTodo,
-			clearCompletedTodo,
-		};
-	},
-};
+// 			if (num < 2) {
+// 				return `${num} item left`;
+// 			} else {
+// 				return `${num} items left`;
+// 			}
+// 		});
+
+// 		watch(
+// 			props.todos,
+// 			(newVal) => {
+// 				console.log(newVal);
+// 			},
+// 			{ deep: true }
+// 		);
+// 		console.log(props.todos);
+
+// 		function deleteTodo(item) {
+// 			context.emit("deleteItem", item);
+// 		}
+// 		function updateTodo(item) {
+// 			item.isCompleted = !item.isCompleted;
+// 		}
+// 		function clearCompletedTodo() {
+// 			context.emit("clearCompleted");
+// 		}
+
+// 		return {
+// 			filteredTodo,
+// 			itemsLeft,
+// 			filteredBy,
+// 			deleteTodo,
+// 			updateTodo,
+// 			clearCompletedTodo,
+// 		};
+// 	},
+// };
 </script>
 
 <style></style>

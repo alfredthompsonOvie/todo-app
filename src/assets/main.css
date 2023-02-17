@@ -64,6 +64,7 @@ body {
 
 	min-height: 100vh;
 	transition: all 0.3s ease;
+  padding-bottom: 7em;
 }
 .container--dark {
 	background-color: var(--VeryDarkBlue);
@@ -233,7 +234,7 @@ header {
   padding: 1.2em;
   font-size: .9rem;
   width: 100%;
-  cursor: move;
+  /* cursor: move; */
 }
 .deleteBtn:hover img {
   filter: brightness(2);
@@ -358,11 +359,10 @@ header {
   opacity: 0;
 }
 
-.todo-enter-active{
+/* .todo-enter-active{
   transition:  all .5s ease;
 }
 .todo-move{
-  /* // transition:  all .5s; */
   transition:  transform .5s;
 }
 .todo-enter-from, .todo-leave-to {
@@ -374,7 +374,7 @@ header {
   transition:  all .5s ease;
   transform-origin: center;
   position: absolute;
-}
+} */
 
 .controls-enter-from, .controls-leave-to {
   opacity: 0;
