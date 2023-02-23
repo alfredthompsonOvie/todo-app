@@ -1,9 +1,8 @@
 <template>
 	<div class="todo__outputContainer" v-auto-animate>
-		<!-- ------------------------------------------------- -->
 		<!-- ALL -->
 		<template v-if="filteredBy === 'all'">
-			<draggable v-model="todos" tag="ul" itemKey="todo" :animation="900">
+			<draggable v-model="todos" tag="ul" itemKey="todo" :animation="100">
 				<template #item="{ element: todo }">
 					<li class="todo__item">
 						<div class="checkbox__container">
@@ -31,18 +30,16 @@
 					</li>
 				</template>
 			</draggable>
-			<!-- <TodoItem
-			v-for="item in todoList"
-			:key="item.content"
-			:todo="item"
-			/> -->
-			<!-- <TodoItem :todoList="todoList"/> -->
 		</template>
 		<!-- ACTIVE -->
 		<template v-if="filteredBy === 'active'">
-			<!-- <TodoItem :todoList="active"/> -->
-			<!-- <TodoItem v-for="item in active" :key="item.content" :todo="item" /> -->
-			<draggable v-model="activeTodos" tag="ul" itemKey="active" :animation="100">
+			<draggable
+			v-model="activeTodos" 
+			tag="ul" 
+			itemKey="active" 
+			:animation="100"
+			@change="onDragChange"
+			>
 				<template #item="{ element: todo }">
 					<li class="todo__item">
 						<div class="checkbox__container">
@@ -73,7 +70,7 @@
 		</template>
 		<!-- COMPLETED-->
 		<template v-if="filteredBy === 'completed'">
-			<draggable v-model="completedTodos" tag="ul" itemKey="completed" :animation="900">
+			<draggable v-model="completedTodos" tag="ul" itemKey="completed" :animation="100">
 				<template #item="{ element: todo }">
 					<li class="todo__item">
 						<div class="checkbox__container">
@@ -102,9 +99,7 @@
 				</template>
 			</draggable>
 		</template>
-		<!-- ------------------------------------------------- -->
-		<!-- ------------------------------------------------- -->
-		<!-- ------------------------------------------------- -->
+
 		<!--! controls -->
 		<div class="controlsTab" v-if="todos.length">
 			<p class="item__left">{{ store.itemsLeftTodo }} left</p>
@@ -147,8 +142,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
-// import TodoItem from "./TodoItem.vue";
+import { ref } from "vue";
 import { useTodoStore } from "../stores/todo";
 import { storeToRefs } from "pinia";
 
@@ -158,25 +152,22 @@ const store = useTodoStore();
 const { todos, activeTodos, completedTodos } = storeToRefs(store);
 const filteredBy = ref("all");
 
-const todoList = ref(todos);
-
-const active = ref(activeTodos);
-const completed = ref(completedTodos);
-
 const handleClearCompleted = () => {
 	store.clearCompleted();
 };
 
 const handleChange = ($event, todo) => {
-  // console.log($event.target.checked);
-  // console.log(todo);
   store.updateTodo(todo)
 }
 const handleClick = (todo) => {
   console.log("todoItem",todo);
   store.deleteTodo(todo)
 }
-
+const onDragChange = ($event) => {
+	console.log("$event", $event);
+	console.log(activeTodos.value);
+	localStorage.setItem("active", JSON.stringify(activeTodos.value));
+}
 // export default {
 // 	name: "TodoLists",
 // 	components: {

@@ -11,7 +11,6 @@
 				class="form__control"
 				:class="{ error: errors.todo }"
 				v-model="todo"
-				@keyup.enter="sendData"
 			/>
 			<span class="circle"></span>
 		</form>

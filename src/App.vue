@@ -7,27 +7,19 @@
 		<div class="todo__container">
 			<!-- AppHeader -->
 			<app-header :isDark="isDark" @theme="isDark = !isDark" />
-			<!-- todo input -->
-			<!-- <create-todo v-model="todoItem" /> -->
+			<!-- get todo -->
 			<create-todo />
-			<!-- todo output -->
+			<!-- display todos -->
 			<todo-lists /> 
-			<!-- <app-todo-list 
-			:todos="todos"
-			@deleteItem="deleteTodo"
-			@clearCompleted="clearCompletedTodo"
-			/> -->
-			<!-- @updateTodoList="updateTodoList" -->
 		</div>
 	</div>
 </template>
 
 <script>
-import { ref, watch, onMounted } from "vue";
+import { ref, watch } from "vue";
 import AppHeader from "@/components/AppHeader.vue";
 import CreateTodo from "@/components/CreateTodo.vue";
 import TodoLists from "@/components/TodoLists.vue";
-// import AppTodoList from "./components/AppTodoList.vue";
 
 export default {
 	name: "App",
@@ -35,65 +27,17 @@ export default {
 		AppHeader,
 		CreateTodo,
 		TodoLists,
-		// AppTodoList,
 	},
 
 	setup() {
 		const isDark = ref(true);
-		// const todoItem = ref("");
-		// const todos = ref([]);
-
-		// const getTodoItem = (v) => todoItem.value = v
-
-		// watch(todoItem, () => {
-		// 	let todo = {
-		// 			content: todoItem.value,
-		// 			isCompleted: false,
-		// 			id: UID(),
-		// 		};
-
-		// 		todos.value.unshift(todo);
-		// })
-
-
-		// watch(
-		// 	todos,
-		// 	(newVal) => {
-		// 		localStorage.setItem("todos", JSON.stringify(newVal));
-		// 	},
-		// 	{ deep: true }
-		// );
-
-		// onMounted(() => {
-		// 	todos.value = JSON.parse(localStorage.getItem("todos")) || [];
-		// });
-		onMounted(()=> console.log('app'))
-
-		// function deleteTodo(item) {
-		// 	todos.value = todos.value.filter((todo) => {
-		// 		return todo !== item;
-		// 	});
-		// }
-		// function clearCompletedTodo() {
-		// 	todos.value = todos.value.filter((todo) => {
-		// 		return todo.isCompleted !== true;
-		// 	});
-		// }
-
-		// function updateTodoList(lists) {
-		// 	todos.value = [];
-		// 	todos.value = lists
-		// 	console.log(lists);
-		// }
-
+		watch(isDark, () => {
+      localStorage.setItem("themeState", isDark.value)
+    })
+		// fires onCreated
+		isDark.value = JSON.parse(localStorage.getItem('themeState'))   
 		return {
 			isDark,
-			// todoItem,
-			// todos,
-			// deleteTodo,
-			// clearCompletedTodo,
-			// getTodoItem,
-			// updateTodoList,
 		};
 	},
 };
