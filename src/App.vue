@@ -31,11 +31,12 @@ export default {
 
 	setup() {
 		const isDark = ref(true);
-		watch(isDark, () => {
-      localStorage.setItem("themeState", isDark.value)
-    })
+		watch(isDark, (newVal) => {
+      localStorage.setItem("theme", newVal)
+		})
+	
 		// fires onCreated
-		isDark.value = JSON.parse(localStorage.getItem('themeState'))   
+		isDark.value = JSON.parse(localStorage.getItem('theme')) || true
 		return {
 			isDark,
 		};

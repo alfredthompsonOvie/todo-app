@@ -13,16 +13,18 @@ export const useTodoStore = defineStore('todo', () => {
 
   
   const addTodo = (todoItem) => {
-    console.log(todoItem);
-    todos.value.unshift(todoItem);
+
     allTodos.value.unshift(todoItem);
+    todos.value.unshift(todoItem);
   }
   
   const deleteTodo = (todo) => {
     todos.value = todos.value.filter(td => td !== todo)
+    allTodos.value  = allTodos.value.filter(td => td !== todo)
   }
   const clearCompleted = () => {
     todos.value = todos.value.filter(td => !td.isCompleted)
+    allTodos.value = allTodos.value.filter(td => !td.isCompleted)
   }
   const updateTodo = (todo) => {
     todos.value = todos.value.map(td => {
@@ -30,42 +32,45 @@ export const useTodoStore = defineStore('todo', () => {
         td.isCompleted = !td.isCompleted
       }
       return td;
-    })
+    });
+
   }
   
-  watchEffect(()=>activeTodos.value = todos.value.filter(tds => !tds.isCompleted))
-  watchEffect(() => completedTodos.value = todos.value.filter(td => td.isCompleted))
+  // watchEffect(()=>activeTodos.value = todos.value.filter(tds => !tds.isCompleted))
+  // watchEffect(() => completedTodos.value = todos.value.filter(td => td.isCompleted))
+  // watchEffect(()=>activeTodos.value = allTodos.value.filter(tds => !tds.isCompleted))
+  // watchEffect(() => completedTodos.value = allTodos.value.filter(td => td.isCompleted))
 
   // --------------------new------------------
-  watch(allTodos, (newVal) => {
-    console.log("----------allTodos start---------");
-    console.log(newVal);
-    console.log("----------allTodos ends---------");
-  })
 
-  watch(todos, (newVal) => {
-    console.log("----------todos start---------");
-    console.log(newVal);
-    console.log("----------todos end---------");
-  })
   // --------------------new------------------
 
-  
-		// watch(
-		// 	todos,
-		// 	(newVal) => {
-		// 		localStorage.setItem("todos", JSON.stringify(newVal));
-		// 	},
-		// 	{ deep: true }
-		// );
-		// watch(
-		// 	activeTodos,
-    //   (newVal) => {
-    //     console.log("watch", newVal);
-		// 		localStorage.setItem("active", JSON.stringify(newVal));
-		// 	},
-		// 	{ deep: true }
-		// );
+		watch(
+			allTodos,
+			(newVal) => {
+        localStorage.setItem("allTodos", JSON.stringify(newVal));
+        activeTodos.value = allTodos.value.filter(tds => !tds.isCompleted)
+        completedTodos.value = allTodos.value.filter(td => td.isCompleted)
+			},
+      { deep: true },
+      {immediate: true}
+		);
+		watch(
+			todos,
+			(newVal) => {
+        localStorage.setItem("todos", JSON.stringify(newVal));
+			},
+      { deep: true },
+      {immediate: true}
+		);
+	// 	watch(
+	// 		activeTodos,
+  //     (newVal) => {
+  //       console.log("watch", newVal);
+	// 			localStorage.setItem("active", JSON.stringify(newVal));
+	// 		},
+	// 		{ deep: true }
+	// 	);
 	// 	watch(
 	// 		completedTodos,
 	// 		(newVal) => {
@@ -75,9 +80,10 @@ export const useTodoStore = defineStore('todo', () => {
   // );
 
 		onMounted(() => {
+			allTodos.value = JSON.parse(localStorage.getItem("allTodos")) || [];
 			todos.value = JSON.parse(localStorage.getItem("todos")) || [];
-			activeTodos.value = JSON.parse(localStorage.getItem("active")) || [];
-			completedTodos.value = JSON.parse(localStorage.getItem("completed")) || [];
+			// activeTodos.value = JSON.parse(localStorage.getItem("active")) || [];
+			// completedTodos.value = JSON.parse(localStorage.getItem("completed")) || [];
 		});
   
   

@@ -142,7 +142,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useTodoStore } from "../stores/todo";
 import { storeToRefs } from "pinia";
 
@@ -160,14 +160,31 @@ const handleChange = ($event, todo) => {
   store.updateTodo(todo)
 }
 const handleClick = (todo) => {
-  console.log("todoItem",todo);
-  store.deleteTodo(todo)
+	store.deleteTodo(todo)
 }
-const onDragChange = ($event) => {
-	console.log("$event", $event);
-	console.log(activeTodos.value);
+const onDragChange = () => {
 	localStorage.setItem("active", JSON.stringify(activeTodos.value));
 }
+watch(
+	filteredBy,
+			(newVal) => {
+				localStorage.setItem("filteredBy", JSON.stringify(newVal));
+			},
+			{ deep: true }
+  );
+watch(
+	todos,
+			() => {
+				if (!todos.value.length) {
+					filteredBy.value = "all"
+				}
+			},
+			{ deep: true }
+  );
+
+		onMounted(() => {
+			filteredBy.value = JSON.parse(localStorage.getItem("filteredBy")) || 'all';
+		});
 // export default {
 // 	name: "TodoLists",
 // 	components: {
