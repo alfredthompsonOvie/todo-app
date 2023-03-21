@@ -21,8 +21,10 @@
 import { useField, useForm } from "vee-validate";
 import { object, string } from "yup";
 import { useTodoStore } from "../stores/todo";
+import { useTasksStore } from "../stores/tasks";
 
 const store = useTodoStore();
+const taskStore = useTasksStore()
 
 const schema = object({
 	todo: string().required(),
@@ -49,6 +51,7 @@ const onSubmit = handleSubmit((values) => {
 		id: UID(),
 	};
 	store.addTodo(todo);
+	taskStore.addTask(todo);
 	resetForm();
 });
 

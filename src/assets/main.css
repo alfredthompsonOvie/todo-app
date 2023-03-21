@@ -81,7 +81,7 @@ body {
 	background-color: var(--VeryDarkDesaturatedBlue);
 	color: var(--LightGrayishBlue);
 }
-.container--dark .form__control::placeholder {
+.container--dark .form__control::placeholder, .container--dark .handle {
 	color: var(--DarkGrayishBlue-darktheme);
 }
 
@@ -118,7 +118,8 @@ body {
 .container--light .title {
 	color: var(--VeryLightGray);
 }
-.container--light .todo__content--completed {
+.container--light .todo__content--completed,
+.container--dark .handle {
 	color: var(--LightGrayishBlue-lighttheme);
 }
 .container--light .todo__outputContainer,
@@ -234,8 +235,13 @@ header {
   padding: 1.2em;
   font-size: .9rem;
   width: 100%;
-  /* cursor: move; */
+  position: relative;
 }
+.handle {
+  cursor: move;
+  transition: all .3s linear;
+}
+
 .deleteBtn:hover img {
   filter: brightness(2);
 }

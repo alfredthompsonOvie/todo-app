@@ -10,7 +10,8 @@
 			<!-- get todo -->
 			<create-todo />
 			<!-- display todos -->
-			<todo-lists /> 
+			<!-- <todo-lists />  -->
+			<TaskLists />
 		</div>
 	</div>
 </template>
@@ -19,14 +20,16 @@
 import { ref, watch } from "vue";
 import AppHeader from "@/components/AppHeader.vue";
 import CreateTodo from "@/components/CreateTodo.vue";
-import TodoLists from "@/components/TodoLists.vue";
+// import TodoLists from "@/components/TodoLists.vue";
+import TaskLists from "./components/TaskLists.vue";
 
 export default {
 	name: "App",
 	components: {
 		AppHeader,
 		CreateTodo,
-		TodoLists,
+		// TodoLists,
+		TaskLists
 	},
 
 	setup() {
